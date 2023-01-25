@@ -1,5 +1,5 @@
 
-docker network create pg-network_hw
+docker network create pg-network
 
 
  docker build -t taxi_ingest:v001 .
@@ -38,7 +38,7 @@ docker run -it \
     taxi_ingest_data_hw:v001 \
         --user=root \
         --password=root \
-        --host=pgdatabase \
+        --host=localhost \
         --port=5432 \
         --db=ny_taxi \
         --table_name1=green_trip_data \
