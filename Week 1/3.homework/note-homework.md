@@ -34,11 +34,11 @@ python3 ingest_hw_data.py \
 
 docker build -t taxi_ingest_data_hw:v001 .
 docker run -it \
-    --network=pg-network_hw \
+    --network=pg-network \
     taxi_ingest_data_hw:v001 \
         --user=root \
         --password=root \
-        --host=localhost \
+        --host=pgdatabase \
         --port=5432 \
         --db=ny_taxi \
         --table_name1=green_trip_data \
