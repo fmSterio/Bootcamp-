@@ -7,7 +7,7 @@ from datetime import timedelta
 import requests
 
 
-@task(cache_key_fn=task_input_hash, cache_expiration=timedelta(minutes=20))
+@task
 def fetch(dataset_url: str) -> Path():
     """Read the data from web into pandas DataFrame."""
 
@@ -80,8 +80,8 @@ def etl_parent_flow(months: list[int]=[1,2], year: int = 2021, color: str = "yel
 
 
 if __name__ == '__main__':
-    year = 2021
-    month = [1,2,3]
+    year = 2019
+    month = [2,3]
     color = "yellow"
     etl_parent_flow(months=month, year=year, color=color)
     

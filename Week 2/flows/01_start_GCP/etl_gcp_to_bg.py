@@ -22,12 +22,11 @@ def extract_from_gcs(color: str, year: int, month: int) -> Path:
 def transform(path: Path) -> pd.DataFrame:
     df = pd.read_parquet(path)
     print(f"pre: missing passenger count: {df.passenger_count.isna().sum()}")
-    df['passenger_count'].fillna(0, inplace=True)
+    #df['passenger_count'].fillna(0, inplace=True)
     print(f"post: missing passenger count: {df.passenger_count.isna().sum()}")
     return df
 
 @task
-
 def write_bq(df: pd.DataFrame) -> None:
     """Write the data to BigQuery"""
     
@@ -42,17 +41,20 @@ def write_bq(df: pd.DataFrame) -> None:
     
 
 
-
-@flow()
-def etl_gcp_to_bg():
-    """Main ETL to load data from GCP to BigQuery"""
-    color = "yellow"
-    year = 2021
-    month = 1
+@flow
+def etl_gcp_to_bg(color:str, year:int, month:int):
 
     path = extract_from_gcs(color, year, month)
     df = transform(path)
     write_bq(df)
+
+
+@flow(log_prints=True)
+def etl_parent_flow(color="yellow", year=2021, month=[2,3]):
+    """Parent flow to run the ETL"""
+    for m in month:
+        etl_gcp_to_bg(color=color, year=year,month=m)
+
 
 if __name__ == '__main__':
     etl_gcp_to_bg()
