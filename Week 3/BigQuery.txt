@@ -1,0 +1,27 @@
+
+CREATE OR REPLACE EXTERNAL TABLE `dtc-de-375317.trips_data_all.fhv_trip_data_external`
+OPTIONS(
+  format = 'parquet',
+  uris = ['gs://dtc_data_lake_dtc-de-375317/data/fhv_tripdata_2019-*.parquet']
+);
+
+CREATE OR REPLACE TABLE `dtc-de-375317.trips_data_all.fhv_trip_data` AS
+SELECT * FROM `dtc-de-375317.trips_data_all.fhv_trip_data_external`;
+
+SELECT COUNT(*) FROM `dtc-de-375317.trips_data_all.fhv_trip_data_external`;
+
+SELECT count(distinct(Affiliated_base_number)) FROM `dtc-de-375317.trips_data_all.fhv_trip_data_external`;
+SELECT count(distinct(Affiliated_base_number)) FROM `dtc-de-375317.trips_data_all.fhv_trip_data`;
+
+SELECT COUNT(*) FROM `dtc-de-375317.trips_data_all.fhv_trip_data`
+WHERE PUlocationID IS NULL AND DOlocationID IS NULL;
+
+SELECT COUNT(DISTINCT(Affiliated_base_number))
+FROM `dtc-de-375317.trips_data_all.fhv_trip_data`
+WHERE pickup_datetime BETWEEN '03-01-2019' AND '03-31-2019';
+
+CREATE OR REPLACE TABLE `dtc-de-375317.trips_data_all.fhv_trip_data_partANDclust` 
+PARTITION BY DATE(pickup_datetime)
+CLUSTER BY Affiliated_base_number AS
+SELECT * FROM `dtc-de-375317.trips_data_all.fhv_trip_data`;
+
