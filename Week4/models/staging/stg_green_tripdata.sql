@@ -6,9 +6,8 @@ with trip_data as (
     where vendorid is not null
 )
 
-
 select 
-    {{ dbt_utils.surrogate_key(['vendorid','lpep_pickup_datetime']) }} as tripid,
+    {{ dbt_utils.surrogate_key(['vendorid','lpep_pickup_datetime','lpep_dropoff_datetime']) }} as tripid,
     cast(vendorid as integer) as vendorid,
     cast(ratecodeid as integer) as ratecodeid,
     cast(pulocationid as integer) as  pickup_locationid,
@@ -36,8 +35,7 @@ select
     cast(payment_type as integer) as payment_type,
     {{ get_payment_type_description('payment_type') }} as payment_type_description,
     cast(congestion_surcharge as numeric) as congestion_surcharge
-from trip_data
-where rn = 1 
+from trip_data 
 {% if var('is_test_run', default=true) %}
     limit 100
 {% endif %}
